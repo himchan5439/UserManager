@@ -3,7 +3,10 @@ package jdbc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Vector;
 
 public class DbManager {
 	
@@ -17,6 +20,8 @@ public class DbManager {
 	private static final String ID = "root";
 	private static final String PW = "qwasqaws12";
 	private Connection con;
+	
+	public static DbManager db = new DbManager();
 
 	public DbManager() {
 		try {
@@ -27,17 +32,17 @@ public class DbManager {
 		}
 	}
 	
-	public int getData(String sql, Object... vals) {
+	public int setData(String sql, Object... vals) {
 		
 		try {
 			PreparedStatement pstmt = con.prepareStatement(sql);
 			
 			int cont = 1;
 			for (Object val : vals) {
-				pstmt.setObject(cont , pstmt);
+				pstmt.setObject(cont++ , val);
 			}
 			
-			pstmt.
+			pstmt.executeUpdate();
 			
 			return 1;
 		} catch (SQLException e) {
@@ -46,5 +51,36 @@ public class DbManager {
 			return -1;
 		}		
 		
+	}
+	
+	public Vector<Vector<String>> getData(String sql, Object... vals) {
+		
+		Vector<Vector<String>> table = new Vector<Vector<String>>();
+
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			
+			int cont = 1;
+			for (Object val : vals) {
+				pstmt.setObject(cont++ , val);
+			}
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			ResultSetMetaData rsmd = rs.getMetaData();
+			
+			while(rs.next()) {
+				Vector<String> row = new Vector<String>();
+				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+					row.add(rs.getObject(i)+"");
+				}
+				table.add(row);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return table;
 	}
 }
