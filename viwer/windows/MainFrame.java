@@ -9,6 +9,7 @@ import javax.swing.JTable;
 import base.BaseFrame;
 import base.BaseLable;
 import jdbc.DbManager;
+import msg.MsgBox;
 
 public class MainFrame extends BaseFrame{
 
@@ -70,6 +71,12 @@ public class MainFrame extends BaseFrame{
 		});
 		userUpdataB.addActionListener(e -> {
 			new UserUpdataFrame(this);
+		});
+		logoutB.addActionListener(e -> {
+			super.dispose();
+			
+			new LoginFrame();
+			
 		});
 	}
 
